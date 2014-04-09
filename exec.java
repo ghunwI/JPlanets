@@ -80,11 +80,13 @@ public class exec
 	        GL11.glLoadIdentity();
 	        GLU.gluPerspective(45f,1,0.1f,100f);
 	        GL11.glMatrixMode(GL11.GL_MODELVIEW);
-	        GLU.gluLookAt(2f,2f,-52f, 0f, 0f, -50f, 0f, 8f, 0f);
+	        GLU.gluLookAt(1f,2f,-52f, 0f, 0f, -50f, 0f, 8f, 0f);
 	        glEnable(GL_LIGHTING);
 	        glEnable(GL_LIGHT0);
 	        glEnable(GL_COLOR_MATERIAL);
-	        glDepthFunc(GL_NEVER);
+		glEnable(GL_DEPTH_TEST);//Even though it looks like depth buffering is failling, it's because one sphere is much larger than the other
+		glDepthFunc(GL_LESS);
+		glDepthMask(true);
 	        glClearColor(0f,0f,0f,1f);
 		}
 		catch (LWJGLException e)
