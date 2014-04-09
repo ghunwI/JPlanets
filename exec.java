@@ -16,7 +16,7 @@ public class exec
 {
 	public static void main(String[] args) throws Exception
 	{
-		Vector<PointMass> list =  new Vector<PointMass>();
+		Vector<PointCharge> list =  new Vector<PointCharge>();
 		
 		Vector<Sphere> planets = new Vector<Sphere>();
 		double deltaT = 0.001;
@@ -27,7 +27,8 @@ public class exec
         double vely;
         double velz;
         double mass;
-        int index = 0;
+        double charge;
+	int index = 0;
         PrintWriter pw = null;
         BufferedReader br = null;
         //*************************************************************************************
@@ -43,14 +44,15 @@ public class exec
         		if((datum = br.readLine()) != null)//for some reason, at the beginning , readline returns null
         		{
             		String[] data = datum.split(",");
-            		mass = Double.parseDouble(data[0]);
-            		posx = Double.parseDouble(data[1]);
-            		posy = Double.parseDouble(data[2]);
-            		posz = Double.parseDouble(data[3]);
-            		velx = Double.parseDouble(data[4]);
-            		vely = Double.parseDouble(data[5]);
-            		velz = Double.parseDouble(data[6]);
-            		PointMass pm = new PointMass(mass,posx,posy,posz,velx,vely,velz);
+            		charge = Double.parseDouble(data[0]);
+			mass = Double.parseDouble(data[1]);
+            		posx = Double.parseDouble(data[2]);
+            		posy = Double.parseDouble(data[3]);
+            		posz = Double.parseDouble(data[4]);
+            		velx = Double.parseDouble(data[5]);
+            		vely = Double.parseDouble(data[6]);
+            		velz = Double.parseDouble(data[7]);
+            		PointCharge pm = new PointCharge(charge,mass,posx,posy,posz,velx,vely,velz);
             		//pw.println("Body " + index++ + " : pos:" + posx + ", " + posy + ", " + posz + ". vel:" + velx + ", " + vely + ", " + velz + ". ");
             		Sphere s = new Sphere();
             		list.add(pm);
@@ -80,7 +82,7 @@ public class exec
 	        GL11.glLoadIdentity();
 	        GLU.gluPerspective(45f,1,0.1f,100f);
 	        GL11.glMatrixMode(GL11.GL_MODELVIEW);
-	        GLU.gluLookAt(1f,2f,-52f, 0f, 0f, -50f, 0f, 8f, 0f);
+	        GLU.gluLookAt(2f,2f,-52f, 0f, 0f, -50f, 0f, 8f, 0f);
 	        glEnable(GL_LIGHTING);
 	        glEnable(GL_LIGHT0);
 	        glEnable(GL_COLOR_MATERIAL);
@@ -99,16 +101,16 @@ public class exec
         while(Display.isCloseRequested() == false)
         {
         	//pw.println("loop: "+ i);
-        	for(PointMass p : list)
+        	for(PointCharge p : list)
         	{
         		p.calculateNewVectors(list, deltaT);
         	}
-        	for(PointMass p : list)
+        	for(PointCharge p : list)
         	{
         		p.update();
         	}
         	index = 0;
-        	/*for(PointMass p : list)
+        	/*for(PointCharge p : list)
         	{
         		double [] x = p.getX();
         		double [] v = p.getV();
@@ -134,7 +136,7 @@ public class exec
 		    	glVertex3f(0f,0f,-50f);
 		    	glVertex3f(0f,0f,-51f);		    	
 		    	glEnd();
-		    	for(PointMass p: list)
+		    	for(PointCharge p: list)
         		{
     				glPushMatrix();
     				glColor3f(p.getColour()[0],p.getColour()[1],p.getColour()[2]);
