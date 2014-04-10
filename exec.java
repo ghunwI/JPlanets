@@ -16,10 +16,11 @@ public class exec
 {
 	public static void main(String[] args) throws Exception
 	{
-		Vector<PointCharge> list =  new Vector<PointCharge>();
+		Vector<PointParticle> list =  new Vector<PointParticle>();
 		
 		Vector<Sphere> planets = new Vector<Sphere>();
-		double deltaT = 0.001;
+	double modulus = 1000;//even though it's initialized in the try block, java's too stupid to figure that out
+	double deltaT = 0.001;
         double posx;
         double posy;
         double posz;
@@ -38,21 +39,28 @@ public class exec
         	br = new BufferedReader(new FileReader("Settings.txt"));
         	//pw = new PrintWriter(new BufferedWriter(new FileWriter("output.txt")));
         	//pw.println("Initial variables; G = 1" + ", \u0394t = " + deltaT );
+        	String datum = br.readLine();//Probably want more than one config file
+		String[] data = datum.split(",");
+		deltaT = Double.parseDouble(data[0]);
+		modulus = Double.parseDouble(data[1]);
+		datum = br.readLine();
+		data = datum.split(",");
+		double G = Double.parseDouble(data[0]);
+		double Ke = Double.parseDouble(data[1]);
         	while(cont)
         	{
-        		String datum;
         		if((datum = br.readLine()) != null)//for some reason, at the beginning , readline returns null
         		{
-            		String[] data = datum.split(",");
-            		charge = Double.parseDouble(data[0]);
-			mass = Double.parseDouble(data[1]);
+            		data = datum.split(",");
+            		mass = Double.parseDouble(data[0]);
+			charge = Double.parseDouble(data[1]);
             		posx = Double.parseDouble(data[2]);
             		posy = Double.parseDouble(data[3]);
             		posz = Double.parseDouble(data[4]);
             		velx = Double.parseDouble(data[5]);
             		vely = Double.parseDouble(data[6]);
             		velz = Double.parseDouble(data[7]);
-            		PointCharge pm = new PointCharge(charge,mass,posx,posy,posz,velx,vely,velz);
+            		PointParticle pm = new PointParticle(mass,charge,posx,posy,posz,velx,vely,velz,G,Ke);
             		//pw.println("Body " + index++ + " : pos:" + posx + ", " + posy + ", " + posz + ". vel:" + velx + ", " + vely + ", " + velz + ". ");
             		Sphere s = new Sphere();
             		list.add(pm);
@@ -69,7 +77,7 @@ public class exec
         }
         catch(Exception e)
         {
-        	JOptionPane.showMessageDialog(null, e.getMessage(), "Error", 0);
+       		JOptionPane.showMessageDialog(null, e.getMessage(), "Error", 0);
         	System.exit(1);
         }
 
@@ -90,6 +98,8 @@ public class exec
 		glDepthFunc(GL_LESS);
 		glDepthMask(true);
 	        glClearColor(0f,0f,0f,1f);
+		
+		
 		}
 		catch (LWJGLException e)
 		{
@@ -101,16 +111,16 @@ public class exec
         while(Display.isCloseRequested() == false)
         {
         	//pw.println("loop: "+ i);
-        	for(PointCharge p : list)
+        	for(PointParticle p : list)
         	{
         		p.calculateNewVectors(list, deltaT);
         	}
-        	for(PointCharge p : list)
+        	for(PointParticle p : list)
         	{
         		p.update();
         	}
         	index = 0;
-        	/*for(PointCharge p : list)
+        	/*for(PointParticle p : list)
         	{
         		double [] x = p.getX();
         		double [] v = p.getV();
@@ -122,7 +132,7 @@ public class exec
         		System.out.println(i);
         	}*/
         	//****************
-        	if((i % (1000)) == 0)
+        	if((i % (modulus)) == 0)
         	{
         		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         		index = 0;
@@ -136,7 +146,7 @@ public class exec
 		    	glVertex3f(0f,0f,-50f);
 		    	glVertex3f(0f,0f,-51f);		    	
 		    	glEnd();
-		    	for(PointCharge p: list)
+		    	for(PointParticle p: list)
         		{
     				glPushMatrix();
     				glColor3f(p.getColour()[0],p.getColour()[1],p.getColour()[2]);

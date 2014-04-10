@@ -2,9 +2,10 @@ import java.lang.Math;
 import java.util.Random;
 import java.util.Vector;//
 
-public class PointCharge
+public class PointParticle
 {
-	static double Ke = 1;
+	static double Ke;
+	double G;
 	double mass;
 	double charge;
 	double[] x0;
@@ -12,8 +13,10 @@ public class PointCharge
 	double[] vnew;
 	double[] xnew;
 	float[] colour;
-	public PointCharge(double theCharge,double theMass, double x, double y, double z, double vx, double vy, double vz)
+	public PointParticle(double theMass,double theCharge, double x, double y, double z, double vx, double vy, double vz,double Gconst, double Kconst)
 	{
+		G = Gconst;
+		Ke = Kconst;
 		x0 = new double[3];
 		v0 = new double[3];
 		colour = new float[3];
@@ -50,7 +53,7 @@ public class PointCharge
 	{
 		return mass;
 	}
-	void calculateNewVectors(Vector<PointCharge> input, double deltaT)
+	void calculateNewVectors(Vector<PointParticle> input, double deltaT)
 	{
 		double temp = 0;// for intermediate calculations
 		double [] deltax = new double[3];
@@ -59,7 +62,7 @@ public class PointCharge
 		double [] totalA = new double[3];
 		for(int x = 0; x < input.size(); x++)
 		{	
-			PointCharge o = input.get(x);
+			PointParticle o = input.get(x);
 			if(o.equals(this))//IMPORTANT: THIS MAKES IT SO THAT THE POINT CHARGES DO NOT COMPARE THEMSELVES (Divide by 0)
 			{
 				continue;
@@ -71,9 +74,11 @@ public class PointCharge
 			temp = (deltax[0] * deltax[0]) + (deltax[1] * deltax[1]) + (deltax[2] * deltax[2]);
 			r[x] = Math.sqrt(temp);
 			//******************* need to preserve magnitude and direction
-			double force = (Ke * charge * o.getCharge())/(r[x]*r[x]);//F = Kq1q2/r^2
+			double GravForce = (G * mass * o.getMass())/(r[x]*r[x]);//F = Kq1q2/r^2
+			double ElecForce = (Ke * charge * o.getCharge())/(r[x]*r[x]);//F = Kq1q2/r^2
+			double force = GravForce + ElecForce;
 			double accel = force/mass;
-			double coefficient = accel/r[x];
+			double coefficient = accel/r[x];//when you multiply coefficient by dx, you multiply a*dx/r. dx/r is a vector over it's norm, just giving a unit vector
 			a[x][0] = coefficient * deltax[0];	
 			a[x][1] = coefficient * deltax[1];	
 			a[x][2] = coefficient * deltax[2];	
