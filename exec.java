@@ -5,12 +5,14 @@ import java.io.PrintWriter;
 import java.util.Vector;
 import java.lang.Double;
 import javax.swing.JOptionPane;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
 import org.lwjgl.util.glu.Sphere;
+
 
 public class exec
 {
@@ -29,6 +31,8 @@ public class exec
         double velz;
         double mass;
         double charge;
+	double G = 0;
+	double Ke = 0;
 	int index = 0;
         PrintWriter pw = null;
         BufferedReader br = null;
@@ -45,8 +49,8 @@ public class exec
 		modulus = Double.parseDouble(data[1]);
 		datum = br.readLine();
 		data = datum.split(",");
-		double G = Double.parseDouble(data[0]);
-		double Ke = Double.parseDouble(data[1]);
+		G = Double.parseDouble(data[0]);
+		Ke = Double.parseDouble(data[1]);
         	while(cont)
         	{
         		if((datum = br.readLine()) != null)//for some reason, at the beginning , readline returns null
@@ -84,8 +88,9 @@ public class exec
 		//***************************************************************************************
 		try 
 		{
-			Display.setDisplayMode(new DisplayMode(800,800));
-			Display.create();
+		Display.setDisplayMode(new DisplayMode(800,800));
+		Display.create();
+		Keyboard.create();
 	        GL11.glMatrixMode(GL11.GL_PROJECTION);
 	        GL11.glLoadIdentity();
 	        GLU.gluPerspective(45f,1,0.1f,100f);
@@ -134,6 +139,17 @@ public class exec
         	//****************
         	if((i % (modulus)) == 0)
         	{
+			if(Keyboard.next())
+			{
+				if(Keyboard.getEventKeyState())
+				{
+					if(Keyboard.getEventCharacter() == 'e')
+					{
+						list.add(new PointParticle(1,1,0,0,0,0,0,0,G,Ke));
+						planets.add(new Sphere());
+					}
+				}
+			}
         		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         		index = 0;
 				glBegin(GL_LINES);
