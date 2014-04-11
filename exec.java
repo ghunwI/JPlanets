@@ -152,21 +152,21 @@ public class exec
 			}
         		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         		index = 0;
-				glBegin(GL_LINES);
+			glBegin(GL_LINES);//Draw the axes
 				glColor3f(1f,1f,1f);
 				glLineWidth(2.5f);
-		    	glVertex3f(0f,0f,-50f);
-		    	glVertex3f(1f,0f,-50f);
-		    	glVertex3f(0f,0f,-50f);
-		    	glVertex3f(0f,1f,-50f);
-		    	glVertex3f(0f,0f,-50f);
-		    	glVertex3f(0f,0f,-51f);		    	
+		    		glVertex3f(0f,0f,-50f);
+		    		glVertex3f(1f,0f,-50f);
+		    		glVertex3f(0f,0f,-50f);
+		    		glVertex3f(0f,1f,-50f);
+		    		glVertex3f(0f,0f,-50f);
+		    		glVertex3f(0f,0f,-51f);		    	
 		    	glEnd();
 		    	for(PointParticle p: list)
         		{
     				glPushMatrix();
     				glColor3f(p.getColour()[0],p.getColour()[1],p.getColour()[2]);
-    				glTranslatef((float)p.getX()[0]/100, (float)p.getX()[1]/100, (float)p.getX()[0]/100- 50f);
+    				glTranslatef((float)p.getX()[0]/100, (float)p.getX()[1]/100, (float)p.getX()[2]/100- 50f);
     				planets.get(index++).draw(radius(p.getMass()), 10, 10);
     				glPopMatrix();
    				
